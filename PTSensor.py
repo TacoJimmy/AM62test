@@ -1,37 +1,38 @@
-'''
-Created on 2024年5月14日
 
-@author: Jimmy
-'''
+from pymodbus.client import ModbusSerialClient
+from pymodbus.transaction import ModbusRtuFramer
 
-import codecs
-# -*- coding: UTF-8 -*-
+# 連線設定
+client = ModbusSerialClient(
+    port="/dev/ttyS0",
+    framer=ModbusRtuFramer,
 
- 
-import serial
-import modbus_tk.defines as cst
-from modbus_tk import modbus_rtu
-import time
+    baudrate=9600,
+    bytesize=8,
+    parity="N",
+    stopbits=1,
+)
 
+# 開始連線
+connection = client.connect()
 
-master = modbus_rtu.RtuMaster(serial.Serial(port='COM3', baudrate=9600, bytesize=8, parity="N", stopbits=1, xonxoff=0))
-master.set_timeout(5.0)
-master.set_verbose(True)
+if  connection:
 
+    print("connect successs!")
 
-if __name__ == '__main__':
-    
-    while True:
-        TH_Sensor = master.execute(3, cst.READ_HOLDING_REGISTERS, 1090, 4)
-        Temp = round(TH_Sensor[0] * 0.01,1)
-        Humd = round(TH_Sensor[3] * 0.01,1)
-        time.sleep(0.01)
+    try:
+
+        res = client.read_holding_registers(
+            address=1090,  # 起始地址
+            count=4,  # 讀取地址數
+            slave=3,
+        )
+        print(res.registers)
+        print(res.registers[0])
+
+    except:
         
-        
-        print (Temp)
-        print (Humd)
+        print("Modbus未成功連線!")
 
-        
-        time.sleep(5)
-    
-    
+    finally:
+        client.close()
