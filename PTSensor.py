@@ -1,10 +1,9 @@
-
 from pymodbus.client import ModbusSerialClient
 from pymodbus.transaction import ModbusRtuFramer
 
 # 連線設定
 client = ModbusSerialClient(
-    port="/dev/ttyS0",
+    port='/dev/ttyS0',
     framer=ModbusRtuFramer,
 
     baudrate=9600,
