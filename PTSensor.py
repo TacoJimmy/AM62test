@@ -1,37 +1,29 @@
+
+import codecs
+# -*- coding: UTF-8 -*-
+
+
 from pymodbus.client import ModbusSerialClient
 from pymodbus.transaction import ModbusRtuFramer
+import time
 
-# 連線設定
-client = ModbusSerialClient(
-    port='/dev/ttyS0',
+
+
+mod_client = ModbusSerialClient(
+    port='/dev/ttyS3',
     framer=ModbusRtuFramer,
 
-    baudrate=9600,
+    baudrate=19200,
     bytesize=8,
     parity="N",
     stopbits=1,
 )
-
 # 開始連線
-connection = client.connect()
+connection = mod_client.connect()
 
-if  connection:
 
-    print("connect successs!")
 
-    try:
 
-        res = client.read_holding_registers(
-            address=1090,  # 起始地址
-            count=4,  # 讀取地址數
-            slave=3,
-        )
-        print(res.registers)
-        print(res.registers[0])
-
-    except:
-        
-        print("Modbus未成功連線!")
-
-    finally:
-        client.close()
+EC01_Temp = mod_client.read_holding_registers(address=0,count=1,slave=2)
+    
+print("EC01_Temp_Data = ", EC01_Temp.registers)
